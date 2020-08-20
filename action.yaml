@@ -1,9 +1,9 @@
 name: 'michael scott paper company'
 description: 'React to issues and comments using your favorite office memes!'
 inputs:
-  ...
-outputs:
-  ...
+  token:
+    description: 'Github token to have access to the repo'
+    required: true
 runs:
   using: 'node13'
   main: 'index.js'
