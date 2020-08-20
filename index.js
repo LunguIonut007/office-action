@@ -14,10 +14,11 @@ async function run() {
   if(eventName === 'issues') {
     const { owner, repo } = github.context.repo
     const { issue } = github.context.payload
+    const issue_number = issue.number
     console.log('Handing issues event...');
 
     const { data: labels } = client.issues.listLabelsOnIssue({
-      owner, repo, issue_number: ''
+      owner, repo, issue_number
     })
 
     console.log(labels)
