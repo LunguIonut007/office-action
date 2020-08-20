@@ -1,0 +1,9 @@
+name: 'michael scott paper company'
+description: 'React to issues and comments using your favorite office memes!'
+inputs:
+  ...
+outputs:
+  ...
+runs:
+  using: 'node13'
+  main: 'index.js'
