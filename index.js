@@ -1,9 +1,18 @@
 const core = require('@actions/core')
 const github = require('@actions/github')
 
+const labelGifMap = {
+  'bug': 'Bug? \n ![Michael no](https://media.giphy.com/media/1T96TRBBGYThC/giphy.gif)',
+  'documentation': 'Documentation? \n ![Documentation meme](https://media.giphy.com/media/4MjVrfDD2WrN6/giphy.gif)',
+  'good first issue': 'Good first issue? \n ![Good first issue meme](https://media.giphy.com/media/CLrEXbY34xfPi/giphy.gif)',
+  'help wanted': 'Help wanted? \n ![Help wanted meme](https://media.giphy.com/media/1GlDW1HBD3q2A/giphy.gif)',
+  'invalid': 'Invalid? \n ![Michael hurt](https://i.redd.it/lhmmpg5pv7uz.jpg)',
+  'wontfix': 'Wontfix? \n ![Andy friendship annoyed](https://media.giphy.com/media/l3Ucl5pIqSaGa82T6/giphy.gif)',
+  'duplicate': 'Duplicate? \n ![Enhance meme](https://media.giphy.com/media/WzxoSXYFGpk1W/giphy.gif)',
+  'enhancement': 'Enhancement? \n ![Enhance meme](https://media.giphy.com/media/E5mkciTEaBLNK/giphy.gif)'
+}
+
 async function run() {
-  // Get the JSON webhook payload for the event that triggered the workflow
-  const payload = github.context.payload;
   const eventName = github.context.eventName;
   
   const token = core.getInput('token');
@@ -13,23 +22,20 @@ async function run() {
 
   if(eventName === 'issues') {
     const { owner, repo } = github.context.repo
-    const { issue } = github.context.payload
-    const issue_number = issue.number
+    const { issue: { number : issue_number, labels } } = github.context.payload
     console.log('Handing issues event...');
 
-    const { data: labels } = client.issues.listLabelsOnIssue({
-      owner, repo, issue_number
-    })
+    let bodyMessages = ['[Auto-message]\n']
 
-    console.log(labels)
-    client.issues.createComment({
-      owner, repo,
-      issue_number,
-      body: '![Family guy meme](http://www.sheawong.com/wp-content/uploads/2013/08/keephatin.gif)'
+    labels.forEach(label => {
+      if(labelGifMap[label.name] !== undefined) {
+        bodyMessages.push(labelGifMap[label.name])
+      }
     })
-    console.log(payload.issue)
-    console.log(payload)
-    console.log(payload.issue.labels)
+    
+    const body = bodyMessages.join('\n')
+    client.issues.createComment({ owner, repo, issue_number, body })
+
   }
 }
 
